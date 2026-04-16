@@ -1,4 +1,4 @@
-const CACHE_NAME = 'photo-coach-v8';
+const CACHE_NAME = 'photo-coach-v9';
 const ASSETS = [
   '/',
   '/index.html',
@@ -25,7 +25,7 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   // Bypass service worker entirely for proxy and Anthropic API calls
-  if (e.request.url.includes('localhost:8081') || e.request.url.includes('api.anthropic.com')) {
+  if (e.request.url.includes('/api/') || e.request.url.includes('localhost:8081') || e.request.url.includes('api.anthropic.com')) {
     return;
   }
   // Always go network-first for app files

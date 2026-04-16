@@ -126,6 +126,15 @@ const GRID_SVG = `<svg class="grid-svg" viewBox="0 0 300 300" preserveAspectRati
 </svg>`;
 
 /* ─── API ─── */
+/** Local Python proxy (dev) vs Vercel serverless /api/analyze (production) */
+function analyzeEndpoint() {
+  const h = window.location.hostname;
+  if (h === "localhost" || h === "127.0.0.1") {
+    return "http://localhost:8081/analyze";
+  }
+  return `${window.location.origin}/api/analyze`;
+}
+
 async function analyzePhoto(imgData) {
   state.phase = "analyzing";
   render();
@@ -133,8 +142,8 @@ async function analyzePhoto(imgData) {
   try {
     const b64 = imgData.split(",")[1];
     const mt = imgData.split(";")[0].split(":")[1];
-    console.log("Sending Anthropic request", { model: "claude-sonnet-4-20250514", media_type: mt });
-    const resp = await fetch("http://localhost:8081/analyze", {
+    console.log("Sending Anthropic request", { url: analyzeEndpoint(), model: "claude-opus-4-5", media_type: mt });
+    const resp = await fetch(analyzeEndpoint(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

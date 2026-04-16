@@ -1,138 +1,67 @@
 # 📸 Personal Photo Coach
+**Developer: Chaw Kay**
 
-> An AI-powered photo coaching PWA built with Claude AI.  
-> 💻 Developer: Chaw Kay
-
----
-
-## What It Does
-
-1. **Scout** — Take a scouting photo of your subject and surroundings
-2. **Analyze** — Claude AI analyzes the scene in real time
-3. **Shoot** — Follow step-by-step voice-guided instructions to get the perfect shot
-
----
-
-## Project Structure
-
-```
-photo-coach-main/
-├── index.html       ← App entry point
-├── app.js           ← Main app logic
-├── style.css        ← Styles & animations
-├── manifest.json    ← PWA config
-├── sw.js            ← Service Worker (offline caching)
-├── proxy.py         ← Local proxy server for Anthropic API
-├── .gitignore
-└── icons/
-    ├── icon-192.png
-    └── icon-512.png
-```
+An AI-powered PWA that guides you to take better photos with real-time Claude AI analysis and voice instructions.
 
 ---
 
 ## Requirements
-
-- Python 3.x installed
-- An Anthropic API key → get one at [console.anthropic.com](https://console.anthropic.com)
-
----
-
-## How to Run Locally
-
-You need **two PowerShell terminals** open at the same time.
+- Python 3
+- Anthropic API key → [console.anthropic.com](https://console.anthropic.com)
 
 ---
 
-### Terminal 1 — Start the AI Proxy Server
+## Run the App
 
-This forwards your photo to Claude AI using your API key.
+Open **2 separate PowerShell windows:**
 
+**Window 1 — AI Proxy**
 ```powershell
 $env:ANTHROPIC_API_KEY="your-api-key-here"
-cd "path\to\photo-coach-main"
+cd "C:\path\to\photo-coach-main"
 python proxy.py
 ```
 
-You should see:
-```
-Starting proxy server on http://localhost:8081
-```
-
-> ⚠️ Replace `your-api-key-here` with your real Anthropic API key.  
-> The key stays on your machine and is never exposed in the browser.
-
----
-
-### Terminal 2 — Start the Frontend Server
-
+**Window 2 — Frontend**
 ```powershell
-cd "path\to\photo-coach-main"
+cd "C:\path\to\photo-coach-main"
 python -m http.server 8080
 ```
 
+Then open **http://localhost:8080** in your browser.
+
+> First time or not seeing changes? Press **Ctrl + Shift + R**
+
 ---
 
-### Open the App
+## Deploy on Vercel (phone / production)
 
-Go to your browser and visit:
+The app **cannot** use `localhost:8081` on your phone. Vercel runs **`api/analyze.js`**, which reads your key from the dashboard.
 
-```
-http://localhost:8080
-```
+1. Push this repo to GitHub and import it in Vercel (or connect the repo you already use).
+2. In Vercel → **Project → Settings → Environment Variables**, add **`ANTHROPIC_API_KEY`** (same as local). Scope: **Production** (and Preview if you want).
+3. **Redeploy** the project (Deployments → ⋮ → Redeploy). New env vars only apply after a deploy.
+4. Open your **`*.vercel.app`** URL on the phone. The app calls **`/api/analyze`** on the same domain (no localhost).
 
-> 💡 If you've opened it before, press **Ctrl + Shift + R** to hard refresh and clear the cache.
+> **Free (Hobby) plan:** serverless functions time out after **10s** by default. If analysis sometimes fails on slow networks, upgrade Vercel or retry; `vercel.json` requests up to **60s** for Pro-class plans.
 
 ---
 
 ## How to Use
-
-1. Click **📷 Open Camera** (or choose a photo from gallery)
-2. Take a scouting photo that includes your subject and background
-3. Wait a few seconds — Claude AI will analyze the scene ✨
-4. Follow the on-screen step-by-step instructions with voice guidance
-5. When all steps are done, press the shutter to take the final photo
-6. Tap **💾 Save Photo to Device** to download it
+1. Tap **Open Camera** and take a scouting photo
+2. Wait for Claude AI to analyze the scene
+3. Follow the voice-guided steps on screen
+4. Tap the shutter when done
+5. Tap **Save Photo** to download
 
 ---
 
 ## Troubleshooting
 
 | Problem | Fix |
-|---|---|
-| `ERR_CONNECTION_REFUSED` on analyze | Make sure proxy.py is running in Terminal 1 |
-| `401 Unauthorized` error | Your API key is wrong or not set |
-| Camera not opening | Allow camera permission in your browser |
-| Old version still showing | Press Ctrl + Shift + R to hard refresh |
-| Voice not playing | Check browser audio permissions and device volume |
-
----
-
-## Deploy to GitHub Pages (Optional)
-
-After pushing to GitHub, enable GitHub Pages:
-
-1. Go to your repo → **Settings** → **Pages**
-2. Set Source to **Deploy from a branch**
-3. Choose branch **`main`** and folder **`/ (root)`**
-4. Click **Save**
-
-Your app will be live at:
-```
-https://<your-username>.github.io/<repo-name>
-```
-
-> ⚠️ Note: GitHub Pages serves static files only. The AI proxy (`proxy.py`) must still run locally on your machine for Claude analysis to work.
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | HTML, CSS, Vanilla JavaScript (PWA) |
-| AI | Anthropic Claude (`claude-opus-4-5`) |
-| Proxy | Python `http.server` |
-| Font | Google Fonts — Nunito |
-| Voice | Web Speech API |
-| Camera | MediaDevices API |
+|---------|-----|
+| AI not working | Make sure `proxy.py` is running (Window 1) |
+| 401 error | Check your API key is correct |
+| Camera blocked | Allow camera permission in browser |
+| Old version showing | Press Ctrl + Shift + R |
+| Works on PC, not on phone (Vercel) | Deploy latest code with `api/analyze.js`, set env var, **Redeploy** |
