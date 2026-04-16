@@ -230,21 +230,42 @@ function render() {
 function renderHome(app) {
   app.innerHTML = `
     <div class="page home-page">
+      <div class="blob-wrap">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="blob blob-4"></div>
+      </div>
       <div class="home-content fade-in">
-        <div class="home-emoji">📸</div>
-        <h1 class="home-title">Personal Photo Coach</h1>
-        <p class="home-desc">
-          Open the camera and take a scouting photo.<br>
-          AI will tell you how to adjust the shot in real time.
-        </p>
-        <button class="main-btn" id="btn-start-camera">📷 Open Camera</button>
-        <button class="sub-btn" id="btn-upload">🖼️ Or choose from gallery</button>
-        <input type="file" accept="image/*" id="file-input" style="display:none">
-        <div class="flow-strip">
-          <span>📸 Scout photo</span><span class="flow-arrow">→</span>
-          <span>🤖 AI analysis</span><span class="flow-arrow">→</span>
-          <span>🎯 Shoot with guidance</span>
+        <div class="emoji-wrap bounce-anim">
+          <span class="home-emoji">📸</span>
+          <span class="star star-1">✨</span>
+          <span class="star star-2">💖</span>
+          <span class="star star-3">✦</span>
+          <span class="star star-4">🌸</span>
         </div>
+        <h1 class="home-title">Personal Photo Coach</h1>
+        <p class="home-subtitle">Powered by Claude AI 💜</p>
+        <p class="home-desc">
+          Snap a scouting photo and get real-time<br>AI guidance to perfect your shot.
+        </p>
+        <div class="flow-cards">
+          <div class="flow-card">
+            <span class="flow-card-emoji">📸</span>
+            <span class="flow-card-label">Scout</span>
+          </div>
+          <div class="flow-card">
+            <span class="flow-card-emoji">🤖</span>
+            <span class="flow-card-label">Analyze</span>
+          </div>
+          <div class="flow-card">
+            <span class="flow-card-emoji">🎯</span>
+            <span class="flow-card-label">Shoot</span>
+          </div>
+        </div>
+        <button class="main-btn" id="btn-start-camera">📷 Open Camera</button>
+        <button class="sub-btn" id="btn-upload">🖼️ Choose from gallery</button>
+        <input type="file" accept="image/*" id="file-input" style="display:none">
       </div>
     </div>`;
 
@@ -303,9 +324,14 @@ function renderAnalyzing(app) {
     <div class="page">
       ${state.scoutImg ? `<img src="${state.scoutImg}" class="analyze-img" alt="">` : ""}
       <div class="analyze-overlay">
-        <div class="spinner"></div>
-        <p style="color:#fff;font-size:16px;font-weight:600;margin-top:16px">AI is analyzing the scene…</p>
-        <p style="color:rgba(255,255,255,0.4);font-size:13px;margin-top:6px">Checking composition, lighting, background, and subject</p>
+        <div class="analyze-icon">🤖</div>
+        <p class="analyze-label"><span>AI is working its magic… ✨</span></p>
+        <p class="analyze-sub">Checking composition, lighting,<br>background &amp; subject position</p>
+        <div class="analyze-dots">
+          <div class="analyze-dot"></div>
+          <div class="analyze-dot"></div>
+          <div class="analyze-dot"></div>
+        </div>
       </div>
     </div>`;
 }
@@ -467,16 +493,25 @@ function renderDrawer() {
   });
 }
 
+/* ─── Helpers: star rating ─── */
+function starsFor(score) {
+  const filled = Math.round((score / 10) * 5);
+  return "★".repeat(filled) + "☆".repeat(5 - filled);
+}
+
 /* ─── Captured ─── */
 function renderCaptured(app) {
   const r = state.result;
   app.innerHTML = `
-    <div class="page captured-page fade-in">
+    <div class="page captured-page fade-in" id="captured-page">
       <div class="compare-wrap">
         <div class="compare-item">
           <img src="${state.scoutImg}" class="compare-img" alt="">
           <div class="compare-badge">
-            <span>Before</span>
+            <div>
+              <div>Before</div>
+              <span class="star-rating" style="color:rgba(255,255,255,0.4)">${starsFor(r?.score_before || 5)}</span>
+            </div>
             <span class="score">${r?.score_before || "?"}</span>
           </div>
         </div>
@@ -484,8 +519,11 @@ function renderCaptured(app) {
         <div class="compare-item">
           <img src="${state.finalImg}" class="compare-img" alt="">
           <div class="compare-badge after">
-            <span style="color:var(--accent)">After</span>
-            <span class="score" style="color:#fff">${r?.score_after || "?"}</span>
+            <div>
+              <div style="color:var(--accent)">After ✨</div>
+              <span class="star-rating" style="color:var(--accent)">${starsFor(r?.score_after || 8)}</span>
+            </div>
+            <span class="score">${r?.score_after || "?"}</span>
           </div>
         </div>
       </div>
@@ -496,13 +534,42 @@ function renderCaptured(app) {
         <p>${r?.ready_message || "Your photo is ready."}</p>
       </div>
 
+      <button class="main-btn" id="btn-save" style="width:calc(100% - 40px);margin:0 auto 10px;display:block">💾 Save Photo to Device</button>
       <button class="outline-btn" id="btn-reshoot">📷 Not satisfied, retake</button>
       <button class="outline-btn" id="btn-rescout">🔄 Reanalyze scout photo</button>
       <button class="link-btn" id="btn-home">← Back to home</button>
     </div>`;
 
+  // Confetti burst
+  const page = document.getElementById("captured-page");
+  const pieces = ["💖","🌸","✨","💜","🌷","💗","🦋","⭐","💕","🎀"];
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement("span");
+    el.className = "confetti-piece";
+    el.textContent = pieces[i % pieces.length];
+    el.style.left = Math.random() * 100 + "%";
+    el.style.top  = (40 + Math.random() * 40) + "%";
+    el.style.animationDelay = (Math.random() * 0.5) + "s";
+    el.style.fontSize = (14 + Math.random() * 16) + "px";
+    page.appendChild(el);
+  }
+
   // Speak done message
   if (r?.ready_message) speak(r.ready_message);
+
+  $("#btn-save").onclick = () => {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+    const filename = `photo-coach-${timestamp}.jpg`;
+    const a = document.createElement("a");
+    a.href = state.finalImg;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    vibrate(80);
+    const btn = $("#btn-save");
+    if (btn) { btn.textContent = "✅ Saved!"; setTimeout(() => { if ($("#btn-save")) $("#btn-save").textContent = "💾 Save Photo to Device"; }, 2000); }
+  };
 
   $("#btn-reshoot").onclick = () => {
     state.finalImg = null; state.stepIdx = 0; state.phase = "shooting";
