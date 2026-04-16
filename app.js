@@ -478,12 +478,12 @@ function renderDrawer() {
         <p class="drawer-title">📋 All steps</p>
         ${steps.map((s, i) => `
           <div class="drawer-item ${i === state.stepIdx ? 'active' : ''}" data-idx="${i}"
-            style="border-color:${i === state.stepIdx ? (s.who === 'person' ? 'rgba(78,205,196,0.33)' : 'rgba(255,209,102,0.33)') : 'rgba(255,255,255,0.06)'}">
-            <span style="font-size:11px;font-weight:700;color:${i <= state.stepIdx ? (s.who === 'person' ? 'var(--person)' : 'var(--photographer)') : 'rgba(255,255,255,0.3)'};min-width:20px">
+            style="border-color:${i === state.stepIdx ? (s.who === 'person' ? 'rgba(78,205,196,0.55)' : 'rgba(200,120,40,0.45)') : 'rgba(45,21,32,0.12)'}">
+            <span style="font-size:11px;font-weight:700;color:${i <= state.stepIdx ? (s.who === 'person' ? '#0d6b6b' : '#b35c00') : 'rgba(45,21,32,0.4)'};min-width:20px">
               ${i < state.stepIdx ? "✓" : i + 1}
             </span>
             <span style="font-size:16px">${s.icon}</span>
-            <span style="font-size:14px;font-weight:${i === state.stepIdx ? 700 : 400};color:${i <= state.stepIdx ? '#fff' : 'rgba(255,255,255,0.45)'}">${s.command}</span>
+            <span style="font-size:14px;font-weight:${i === state.stepIdx ? 700 : 400};color:${i <= state.stepIdx ? '#1a0a14' : 'rgba(26,10,20,0.5)'}">${s.command}</span>
           </div>
         `).join("")}
         <button class="drawer-close" id="btn-drawer-close">Close</button>
