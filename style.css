@@ -152,6 +152,11 @@ html, body {
 }
 .sub-btn:active { background:rgba(255,255,255,0.7); }
 
+.dev-credit {
+  margin-top:22px; font-size:12px; font-weight:700;
+  color:rgba(160,60,110,0.5); letter-spacing:0.4px;
+}
+
 /* ════════════════════════════════
    CAMERA
 ════════════════════════════════ */

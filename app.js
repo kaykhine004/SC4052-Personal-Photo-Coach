@@ -266,6 +266,7 @@ function renderHome(app) {
         <button class="main-btn" id="btn-start-camera">📷 Open Camera</button>
         <button class="sub-btn" id="btn-upload">🖼️ Choose from gallery</button>
         <input type="file" accept="image/*" id="file-input" style="display:none">
+        <p class="dev-credit">💻 Developer: Chaw Kay</p>
       </div>
     </div>`;
 

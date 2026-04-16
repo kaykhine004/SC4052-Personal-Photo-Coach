@@ -1,4 +1,4 @@
-const CACHE_NAME = 'photo-coach-v7';
+const CACHE_NAME = 'photo-coach-v8';
 const ASSETS = [
   '/',
   '/index.html',
