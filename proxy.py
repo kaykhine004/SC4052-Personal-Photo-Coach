@@ -16,6 +16,31 @@ class ProxyHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
 
+    def do_GET(self):
+        """Browser visits show a hint — only POST /analyze is the real API."""
+        raw = self.path.split('?', 1)[0]
+        if raw in ('', '/'):
+            html = """<!DOCTYPE html><html><head><meta charset="utf-8"><title>Photo Coach proxy</title></head>
+<body style="font-family:system-ui,sans-serif;max-width:520px;margin:48px auto;padding:24px;line-height:1.5">
+<h1>Photo Coach proxy is running</h1>
+<p>Port <strong>8081</strong> is the <strong>API proxy</strong> (for <code>POST /analyze</code> only).</p>
+<p><strong>Open the app in your browser:</strong><br>
+<a href="http://localhost:8080">http://localhost:8080</a></p>
+<p>Keep this terminal open while you use the app. Start <code>python -m http.server 8080</code> in a <em>second</em> window if you have not already.</p>
+</body></html>"""
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(html.encode('utf-8'))
+            return
+        self.send_response(405)
+        self.send_header('Content-Type', 'text/plain; charset=utf-8')
+        self.send_header('Allow', 'POST, OPTIONS')
+        self.end_headers()
+        self.wfile.write(
+            b'Use POST /analyze only. Open the app at http://localhost:8080\n'
+        )
+
     def do_OPTIONS(self):
         self._set_headers()
 
@@ -54,6 +79,13 @@ def run(server_class=HTTPServer, handler_class=ProxyHandler):
     server_address = ('', PORT)
     httpd = server_class(server_address, handler_class)
     print(f'Starting proxy server on http://localhost:{PORT}')
+    print('')
+    print('  This window = API only (for the app to call).')
+    print('  NEXT: open a SECOND terminal and run:')
+    print('        python -m http.server 8080')
+    print('  THEN: in Chrome open:  http://localhost:8080')
+    print('  (If you opened 8081 and saw "501", restart this script after saving proxy.py.)')
+    print('')
     httpd.serve_forever()
 
 
